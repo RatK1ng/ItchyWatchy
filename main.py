@@ -23,10 +23,10 @@ def ConfigureServiceAddress():
     while not LoopBool:
         ServiceAddress = input('Please enter target ipv4 address (no ports)\n')
         if RegexIp.match(ServiceAddress):
+            print('Your target address is', ServiceAddress + '\n')
             LoopBool = True
         else:
             print('Ipv4 Address not valid, please retry\n')
-        print('Your target address is', ServiceAddress + '\n')
     return ServiceAddress
 
 
@@ -61,12 +61,13 @@ def TestDisplayConfiguration():
 
 
 def ConnectRDP():
-    OsCommand = ('%systemroot%/system32/mstsc.exe /v:' + ServiceAddress + ':' + ServicePort)
+    OsCommand = ('mstsc /v:' + ServiceAddress + ':' + ServicePort)
     print(OsCommand)
+    os.system(OsCommand)
 
 
 def ConnectSSH():
-    OsCommand = ('plink ', Credentials[0] + '@' + ServiceAddress, ' -P ',
+    OsCommand = ('start putty ', Credentials[0] + '@' + ServiceAddress, ' -P ',
                  ServicePort, Credentials[1])
     OsCommand = (''.join(OsCommand))
     print('Executing the following command\n' + ''.join(OsCommand))
@@ -74,33 +75,11 @@ def ConnectSSH():
     # 'plink username@host -i key.ppk' is the command to use to use putty via cmd
 
 
-def ClientManager():
-    root = Tk()
-    tree = ttk.Treeview(root)
-
-    tree["columns"] = ("one", "two")
-    tree.column("one", width=150)
-    tree.column("two", width=70)
-    tree.heading("one", text="Ipv4 Address")
-    tree.heading("two", text="Method")
-
-    Microsoft = tree.insert('', 0, text='Microsoft sites', values=('', ''))
-    tree.insert(Microsoft, "end", text='Sub item for MC', values=('192.168.0.1', 'RDP'))
-    '''
-    We construct the node by :
-    nodeid = tree.insert(parent, 'index', text='text to display', values=(data for first column, data for next etc))
-    '''
-
-    tree.pack()
-    root.mainloop()
-
-
-
-ClientManager()
 ServiceAddress = ConfigureServiceAddress()
-ServicePort = ConfigureServicePort()
 ServiceType = ConfigureServiceType()
+ServicePort = ConfigureServicePort()
+
 
 TestDisplayConfiguration()
-
+ConnectRDP()
 exit()
